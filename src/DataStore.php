@@ -1,5 +1,7 @@
 <?php namespace Caleano\Freifunk\MeetupRegister;
 
+use wpdb;
+
 defined('ABSPATH') or die('NOPE');
 
 /**
@@ -13,11 +15,13 @@ class DataStore
      */
     public function store(array $data)
     {
-        if (!$this->saveData($data)) {
+        $optInKey = substr(base64_encode(random_bytes(50)), 0, 50);
+
+        if (!$this->saveData($data, $optInKey)) {
             return false;
         }
 
-        if (!$this->sendEmail($data)) {
+        if ($optInKey && !$this->sendEmail($data, $optInKey)) {
             return false;
         }
 
@@ -25,39 +29,52 @@ class DataStore
     }
 
     /**
-     * @TODO
-     *
-     * @param array $data
+     * @param array  $data
+     * @param string $optInKey
      * @return bool
      */
-    protected function saveData($data)
+    protected function saveData($data, $optInKey)
     {
-        /*
-        $data = [
-            'name'      => 'Foo Bar',
-            'community' => 'Foobar',
-            'email'     => 'foo.bar@batz.bar',
-            'day'       => ['friday', 'saturday', 'sunday'],
-            'grill'     => ['saturday', 'sunday'],
-            'lunch'     => ['saturday'],
-            'other'     => 'Blablabla'
-        ];
-        */
+        /** @var wpdb $wpdb */
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'meetup_registration';
 
-        return wp_mail(
-            'admin@foo.bar',
-            'Freifunk Meetup 2016.2 - Daten',
-            json_encode($data)
+        return $wpdb->insert(
+            $table_name,
+            [
+                'name'      => $data['name'],
+                'community' => $data['community'],
+                'email'     => $data['email'],
+                'day'       => $this->getArrayString($data['day']),
+                'grill'     => $this->getArrayString($data['grill']),
+                'lunch'     => $this->getArrayString($data['lunch']),
+                'other'     => $data['other'],
+                'optInKey'  => $optInKey,
+            ]
         );
     }
 
     /**
-     * @param array $data
+     * @param array $array
+     * @return string|null
+     */
+    protected function getArrayString(array $array)
+    {
+        if (empty($array)) {
+            return null;
+        }
+
+        return sprintf('|%s|', implode('|', $array));
+    }
+
+    /**
+     * @param array  $data
+     * @param string $optInKey
      * @return bool
      */
-    protected function sendEmail(array $data)
+    protected function sendEmail(array $data, $optInKey)
     {
-        $confirmationLink = $this->generateConfirmationLink($data);
+        $confirmationLink = $this->generateConfirmationLink($data, $optInKey);
         $message = sprintf(
             'Bitte klicke auf den folgenden Link um deine Anmeldung zu bestätigen' . PHP_EOL
             . '%s' . PHP_EOL . PHP_EOL
@@ -73,13 +90,19 @@ class DataStore
     }
 
     /**
-     * @TODO: Implement
-     *
      * @param string[] $data
+     * @param string   $optInKey
      * @return string
      */
-    protected function generateConfirmationLink($data)
+    protected function generateConfirmationLink($data, $optInKey)
     {
-        return 'foo/bar/confirm';
+        $url = site_url('/meetup/register/optIn/');
+
+        return sprintf(
+            '%s?key=%s&email=%s',
+            $url,
+            urlencode($optInKey),
+            urlencode($data['email'])
+        );
     }
 }
