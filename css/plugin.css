@@ -1,0 +1,22 @@
+/**
+ * Meetup Registration Styles
+ */
+
+.meetup-registration .form-group {
+    margin-bottom: 1em;
+}
+
+.meetup-registration .label {
+    font-weight: bold;
+}
+
+.meetup-registration .checkbox .label {
+    display: block;
+}
+
+.meetup-registration .form-group.checkbox input[type="checkbox"] {
+    margin-left: 0.75em;
+    margin-right: 0.25em;
+    transform: scale(1.3);
+    outline: transparent;
+}
