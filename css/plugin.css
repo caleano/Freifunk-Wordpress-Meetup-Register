@@ -20,3 +20,17 @@
     transform: scale(1.3);
     outline: transparent;
 }
+
+.meetup-registration .reallySecureCap1cha {
+    display: none;
+}
+
+.meetup-registration-form-error {
+    border: 1px solid #ebccd1;
+    background-color: #f2dede;
+    color: #a94442;
+    font-family: sans-serif;
+    margin-bottom: 1em;
+
+    padding: 0.25em 0.75em;
+}

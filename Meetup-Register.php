@@ -15,6 +15,7 @@ use Caleano\Freifunk\MeetupRegister\Template;
 use Caleano\Freifunk\MeetupRegister\WordpressRouting;
 
 require_once __DIR__ . '/src/WordpressRouting.php';
+require_once __DIR__ . '/src/DataStore.php';
 require_once __DIR__ . '/src/Template.php';
 require_once __DIR__ . '/src/RegistrationForm.php';
 

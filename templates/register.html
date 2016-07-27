@@ -11,6 +11,12 @@
     <li><a href="#">Bar</a></li>
 </ul>
 
+%ERRORS%
+
+<small>
+    Mit <span class="required">*</span> gekennzeichnete Felder müssen ausgefüllt werden
+</small>
+
 <form method="post" class="meetup-registration" action="">
 
     <div class="form-group name">
@@ -31,7 +37,7 @@
                value="" name="email" required>
     </div>
 
-    <div class="form-group checkbox day">
+    <div class="form-group checkbox checkbox-required day">
         <label>
             <span class="label">Anwesenheit<span class="required">*</span></span>
             <input type="checkbox" class="day-field" name="day[]" value="friday"> Freitag
@@ -61,6 +67,12 @@
 
         </textarea>
     </div>
+
+    <label for="iAmAHiddenCap1chaDontPutAnyDataInHere" class="label reallySecureCap1cha">
+        Cap1cha, should be empty
+    </label>
+    <input type="text" class="reallySecureCap1cha"
+           name="iAmAHiddenCap1chaDontPutAnyDataInHere" id="iAmAHiddenCap1chaDontPutAnyDataInHere">
 
     <input type="submit" class="form-submit" value="Anmelden">
 

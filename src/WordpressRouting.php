@@ -19,6 +19,20 @@ class WordpressRouting
     }
 
     /**
+     * On any request
+     *
+     * @param string   $url
+     * @param callable $callback
+     */
+    public static function all($url, callable $callback)
+    {
+        self::$routes['all'][] = [
+            'url'      => $url,
+            'callback' => $callback,
+        ];
+    }
+
+    /**
      * On GET-request
      *
      * @param string   $url
@@ -26,7 +40,49 @@ class WordpressRouting
      */
     public static function get($url, callable $callback)
     {
-        self::$routes['get'][] = [
+        self::$routes['GET'][] = [
+            'url'      => $url,
+            'callback' => $callback,
+        ];
+    }
+
+    /**
+     * On POST-request
+     *
+     * @param string   $url
+     * @param callable $callback
+     */
+    public static function post($url, callable $callback)
+    {
+        self::$routes['POST'][] = [
+            'url'      => $url,
+            'callback' => $callback,
+        ];
+    }
+
+    /**
+     * On PUT-request
+     *
+     * @param string   $url
+     * @param callable $callback
+     */
+    public static function put($url, callable $callback)
+    {
+        self::$routes['PUT'][] = [
+            'url'      => $url,
+            'callback' => $callback,
+        ];
+    }
+
+    /**
+     * On HEAD-request
+     *
+     * @param string   $url
+     * @param callable $callback
+     */
+    public static function head($url, callable $callback)
+    {
+        self::$routes['HEAD'][] = [
             'url'      => $url,
             'callback' => $callback,
         ];
@@ -40,23 +96,44 @@ class WordpressRouting
      */
     public function filterPosts(array $posts)
     {
+        /**  @var WP_Query $wp_query */
+        global $wp_query;
+
+        if (count($posts) != 0 && $wp_query->query_vars['error'] != 404) {
+            return $posts;
+        }
+
+        $requestType = $_SERVER['REQUEST_METHOD'];
+
+        if ($return = $this->handleRoutes($requestType)) {
+            return $return;
+        }
+
+        if ($return = $this->handleRoutes('all')) {
+            return $return;
+        }
+
+        return $posts;
+    }
+
+    protected function handleRoutes($type)
+    {
         /**
          * @var WP       $wp
          * @var WP_Query $wp_query
          */
         global $wp, $wp_query;
 
-        if (count($posts) != 0 && $wp_query->query_vars['error'] != 404) {
-            return $posts;
+        if (empty(self::$routes[$type])) {
+            return null;
         }
 
-        $emptyPage = $this->getEmptyPage($wp->request);
-
-        foreach (self::$routes['get'] as $route) {
+        foreach (self::$routes[$type] as $route) {
             if (
                 $wp->request == $route['url']
                 || $wp->query_vars['page_id'] == $route['url']
             ) {
+                $emptyPage = $this->getEmptyPage($wp->request);
                 $page = $route['callback']($emptyPage);
                 if (!$page) {
                     continue;
@@ -67,7 +144,7 @@ class WordpressRouting
             }
         }
 
-        return $posts;
+        return null;
     }
 
     /**
