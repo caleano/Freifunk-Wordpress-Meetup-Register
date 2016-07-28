@@ -45,6 +45,7 @@ class RegistrationForm
 
         $template = Template::render('register', ['%ERRORS%' => $errorList]);
         $template = Template::removeWhitespace($template);
+        $template = str_replace('%ABOUT_TEXT%', Settings::get('about-text'), $template);
         $page->post_content = $template;
 
         return $page;

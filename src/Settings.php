@@ -32,8 +32,9 @@ class Settings
     {
         self::$options = array_merge(
             [
-                'title'  => 'Freifunk Meetup 2016.2',
-                'active' => true,
+                'title'      => 'Freifunk Meetup 2016.2',
+                'active'     => true,
+                'about-text' => 'Anmeldung zum dritten Treffen der Freifunk Communities in und um Hessen, *irgendwann* 2016',
             ],
             (array)get_option('meetup_registration')
         );
@@ -64,6 +65,7 @@ class Settings
      */
     public function createAdminPage()
     {
+        $this->printStyles();
         ?>
         <div class="wrap">
             <h2>Meetup Registration</h2>
@@ -112,6 +114,14 @@ class Settings
             'meetup-registration-admin',
             'primary_settings'
         );
+
+        add_settings_field(
+            'about-text',
+            'About text',
+            [$this, 'aboutTextCallback'],
+            'meetup-registration-admin',
+            'primary_settings'
+        );
     }
 
     /**
@@ -132,11 +142,28 @@ class Settings
             $sanitizedInput['active'] = (bool)$input['active'];
         }
 
+        if (isset($input['about-text'])) {
+            $sanitizedInput['about-text'] = $input['about-text'];
+        }
+
         return $sanitizedInput;
     }
 
     /**
-     * Print the Section text
+     * Print the styles
+     */
+    public function printStyles()
+    {
+        echo '<style>
+                textarea,
+                input{
+                    min-width: 50%;
+                }
+              </style>';
+    }
+
+    /**
+     * Print the section text
      */
     public function printSectionInfo()
     {
@@ -144,7 +171,7 @@ class Settings
     }
 
     /**
-     * Get the settings option array and print one of its values
+     * Print the title text field
      */
     public function titleCallback()
     {
@@ -155,13 +182,24 @@ class Settings
     }
 
     /**
-     * Get the settings option array and print one of its values
+     * Print the "Active" checkbox
      */
     public function activeCallback()
     {
         printf(
             '<input type="checkbox" id="active" name="meetup_registration[active]" %s />',
             self::$options['active'] ? 'checked' : ''
+        );
+    }
+
+    /**
+     * Print the text about text area
+     */
+    public function aboutTextCallback()
+    {
+        printf(
+            '<textarea id="about-text" name="meetup_registration[about-text]" >%s</textarea>',
+            htmlspecialchars(self::$options['about-text'])
         );
     }
 
