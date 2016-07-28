@@ -200,6 +200,7 @@ class WordpressRouting
             'post_style'            => 'page',
             'post_mime_type'        => '',
             'comment_count'         => 0,
+            'filter'                => 'raw',
         ];
 
         $post = new WP_Post($post);

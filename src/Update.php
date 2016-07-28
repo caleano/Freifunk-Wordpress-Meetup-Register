@@ -29,7 +29,7 @@ class Update
 
         $sql = "
             CREATE TABLE $table_name (
-                `id` bigint(20) NOT NULL UNIQUE AUTO_INCREMENT,
+                `id` bigint(20) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) NOT NULL,
                 `community` varchar(255) NOT NULL,
                 `email` varchar(255) UNIQUE NOT NULL,
@@ -39,7 +39,7 @@ class Update
                 `other` text,
                 `optInKey` varchar(50),
                 `time` datetime DEFAULT NOW() NOT NULL,
-                UNIQUE KEY `id` (`id`)
+                UNIQUE KEY id (`id`)
             ) $charset_collate;";
 
         dbDelta($sql);
