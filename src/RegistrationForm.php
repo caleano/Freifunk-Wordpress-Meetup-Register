@@ -27,6 +27,10 @@ class RegistrationForm
      */
     public function onGetForm(WP_Post $page, $errors = [])
     {
+        if (!Settings::get('active')) {
+            return $this->submissionDisabled($page);
+        }
+
         $page->post_title = Settings::get('title') . ' - Anmeldung';
         $errorList = '';
 
@@ -54,6 +58,10 @@ class RegistrationForm
      */
     public function onPostForm(WP_Post $page)
     {
+        if (!Settings::get('active')) {
+            return $this->submissionDisabled($page);
+        }
+
         if (($errors = $this->validateRequest()) !== true) {
             return $this->onGetForm($page, $errors);
         }
@@ -109,6 +117,20 @@ class RegistrationForm
 
         $page->post_title .= ' - OptIn';
         $page->post_content = Template::render('optInSuccess');
+
+        return $page;
+    }
+
+    /**
+     * Render a form disabled page
+     *
+     * @param WP_Post $page
+     * @return WP_Post
+     */
+    protected function submissionDisabled(WP_Post $page)
+    {
+        $page->post_title = Settings::get('title') . ' - Anmeldung beendet';
+        $page->post_content = Template::render('disabled');
 
         return $page;
     }

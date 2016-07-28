@@ -32,7 +32,8 @@ class Settings
     {
         self::$options = array_merge(
             [
-                'title' => 'Freifunk Meetup 2016.2',
+                'title'  => 'Freifunk Meetup 2016.2',
+                'active' => true,
             ],
             (array)get_option('meetup_registration')
         );
@@ -103,6 +104,14 @@ class Settings
             'meetup-registration-admin',
             'primary_settings'
         );
+
+        add_settings_field(
+            'active',
+            'Active',
+            [$this, 'activeCallback'],
+            'meetup-registration-admin',
+            'primary_settings'
+        );
     }
 
     /**
@@ -116,6 +125,11 @@ class Settings
         $sanitizedInput = [];
         if (isset($input['title'])) {
             $sanitizedInput['title'] = sanitize_text_field($input['title']);
+        }
+
+        $sanitizedInput['active'] = false;
+        if (isset($input['active'])) {
+            $sanitizedInput['active'] = (bool)$input['active'];
         }
 
         return $sanitizedInput;
@@ -137,6 +151,17 @@ class Settings
         printf(
             '<input type="text" id="title" name="meetup_registration[title]" value="%s" />',
             self::$options['title']
+        );
+    }
+
+    /**
+     * Get the settings option array and print one of its values
+     */
+    public function activeCallback()
+    {
+        printf(
+            '<input type="checkbox" id="active" name="meetup_registration[active]" %s />',
+            self::$options['active'] ? 'checked' : ''
         );
     }
 
