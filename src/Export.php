@@ -66,8 +66,8 @@ class Export
             $item = $this->escapeCsv($item);
         }
 
-        $data = implode(';', $data);
-        echo $data . PHP_EOL;
+        $data = implode(',', $data);
+        echo $data . "\r\n";
     }
 
     /**
@@ -81,8 +81,10 @@ class Export
         }
 
         if (
-            strpos($data, '"') !== false
-            || strpos($data, PHP_EOL) !== false
+            strpos($data, ',') !== false
+            || strpos($data, "\r") !== false
+            || strpos($data, "\n") !== false
+            || strpos($data, '"') !== false
         ) {
             $data = sprintf('"%s"', $data);
         }
