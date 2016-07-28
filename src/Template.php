@@ -18,7 +18,7 @@ class Template
      */
     public function registerStyles()
     {
-        wp_enqueue_style('meetup-registration', plugins_url('Meetup-Register/assets/css/plugin.css'));
+        wp_enqueue_style('meetup-registration', $this->getPluginAssetPath('assets/css/plugin.css'));
     }
 
     /**
@@ -26,7 +26,7 @@ class Template
      */
     public function registerScripts()
     {
-        wp_enqueue_script('meetup-registration-js', plugins_url('Meetup-Register/assets/js/plugin.js'), ['jquery']);
+        wp_enqueue_script('meetup-registration-js', $this->getPluginAssetPath('assets/js/plugin.js'), ['jquery']);
     }
 
     /**
@@ -105,5 +105,20 @@ class Template
         $html = preg_replace('/"\s+(\w)/i', '"$1', $html);
 
         return $html;
+    }
+
+    /**
+     * Get plugin asset path
+     *
+     * @param string $assetPath
+     * @return string
+     */
+    protected function getPluginAssetPath($assetPath)
+    {
+        $dir = realpath(__DIR__ . '/../');
+        $dir = explode('/', $dir);
+        $dirName = array_pop($dir);
+
+        return plugins_url($dirName . '/' . $assetPath);
     }
 }
