@@ -46,23 +46,48 @@ class Export
         $header = $this->getHeader($data);
         $header = array_diff($header, ['optInKey']);
 
-        $this->printData($header);
+        $this->printCsvData($header);
 
         foreach ($data as $row) {
             $row = (array)$row;
             unset($row['optInKey']);
-            $this->printData($row);
+            $this->printCsvData($row);
         }
 
         exit;
     }
 
     /**
-     * @param $data
+     * @param string[] $data
      */
-    public function printData(array $data)
+    public function printCsvData(array $data)
     {
-        echo implode(';', $data) . PHP_EOL;
+        foreach ($data as &$item) {
+            $item = $this->escapeCsv($item);
+        }
+
+        $data = implode(';', $data);
+        echo $data . PHP_EOL;
+    }
+
+    /**
+     * @param string $data
+     * @return string
+     */
+    protected function escapeCsv($data)
+    {
+        if (strpos($data, '"') !== false) {
+            $data = str_replace('"', '""', $data);
+        }
+
+        if (
+            strpos($data, '"') !== false
+            || strpos($data, PHP_EOL) !== false
+        ) {
+            $data = sprintf('"%s"', $data);
+        }
+
+        return $data;
     }
 
     /**

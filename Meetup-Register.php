@@ -4,7 +4,7 @@
 Plugin Name: Meetup Registration
 Plugin URI: https://github.com/caleano/Freifunk-Wordpress-Meetup-Register
 Description: Ein Wordpress Plugin für Freifunk Frankfurt um sich fürs Meetup anzumelden
-Version: 1.0.0
+Version: 1.0.1
 Author: Igor Scheller <igor.scheller@igorshp.de>
 Author URI: https://igorshp.de
 License: MIT

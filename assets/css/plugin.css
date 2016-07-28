@@ -6,8 +6,19 @@
     margin-bottom: 1em;
 }
 
+.meetup-registration input:not([type="radio"]):not([type="checkbox"]) {
+    min-width: 100%;
+}
+
 .meetup-registration .label {
     font-weight: bold;
+    display: block;
+}
+
+.meetup-registration-required,
+.meetup-registration .required {
+    color: #f2157d;
+    margin-left: 0.25em;
 }
 
 .meetup-registration .checkbox .label {
@@ -28,9 +39,14 @@
 .meetup-registration-form-error {
     border: 1px solid #ebccd1;
     background-color: #f2dede;
-    color: #a94442;
+    color: #dc0067;
     font-family: sans-serif;
     margin-bottom: 1em;
 
     padding: 0.25em 0.75em;
+}
+
+.meetup-registration-form-error strong.title {
+    font-size: 1.2em;
+    display: block;
 }
