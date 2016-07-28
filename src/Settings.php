@@ -34,6 +34,7 @@ class Settings
             [
                 'title'      => 'Freifunk Meetup 2016.2',
                 'active'     => true,
+                'email'      => '',
                 'about-text' => 'Anmeldung zum dritten Treffen der Freifunk Communities in und um Hessen, *irgendwann* 2016',
             ],
             (array)get_option('meetup_registration')
@@ -116,6 +117,14 @@ class Settings
         );
 
         add_settings_field(
+            'email',
+            'Notification Email',
+            [$this, 'emailCallback'],
+            'meetup-registration-admin',
+            'primary_settings'
+        );
+
+        add_settings_field(
             'about-text',
             'About text',
             [$this, 'aboutTextCallback'],
@@ -140,6 +149,10 @@ class Settings
         $sanitizedInput['active'] = false;
         if (isset($input['active'])) {
             $sanitizedInput['active'] = (bool)$input['active'];
+        }
+
+        if (isset($input['email'])) {
+            $sanitizedInput['email'] = sanitize_text_field($input['email']);
         }
 
         if (isset($input['about-text'])) {
@@ -189,6 +202,17 @@ class Settings
         printf(
             '<input type="checkbox" id="active" name="meetup_registration[active]" %s />',
             self::$options['active'] ? 'checked' : ''
+        );
+    }
+
+    /**
+     * Print the title text field
+     */
+    public function emailCallback()
+    {
+        printf(
+            '<input type="email" id="email" name="meetup_registration[email]" value="%s" />',
+            self::$options['email']
         );
     }
 

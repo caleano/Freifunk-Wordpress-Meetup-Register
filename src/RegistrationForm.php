@@ -105,8 +105,9 @@ class RegistrationForm
         $page->post_title = Settings::get('title');
 
         if (
-            !($id = $this->validateOptIn())
-            || !$this->unsetOptIn($id)
+            !($data = (array)$this->validateOptIn())
+            || empty($data)
+            || !$this->unsetOptIn($data['id'])
         ) {
             $template = Template::renderErrors([
                 'Es gab einen Fehler' => 'Wahrscheinlich wurdest du bereits freigeschaltet'
@@ -118,6 +119,8 @@ class RegistrationForm
 
         $page->post_title .= ' - OptIn';
         $page->post_content = Template::render('optInSuccess');
+
+        $this->notify($data);
 
         return $page;
     }
@@ -137,7 +140,7 @@ class RegistrationForm
     }
 
     /**
-     * @return int|null
+     * @return string[]|null
      */
     protected function validateOptIn()
     {
@@ -164,7 +167,7 @@ class RegistrationForm
             return null;
         }
 
-        return $data->id;
+        return $data;
     }
 
     /**
@@ -265,6 +268,38 @@ class RegistrationForm
         }
 
         return empty($errors) ? true : $errors;
+    }
+
+    /**
+     * @param array $data
+     * @return bool
+     */
+    protected function notify(array $data)
+    {
+        $to = Settings::get('email');
+        if (empty($to)) {
+            return true;
+        }
+
+        $mail = Template::render(
+            'notifyMail',
+            [
+                '%NAME%'      => $data['name'],
+                '%COMMUNITY%' => $data['community'],
+                '%EMAIL%'     => $data['email'],
+                '%DAY%'       => str_replace('|', ', ', trim($data['day'], '|')),
+                '%GRILL%'     => str_replace('|', ', ', trim($data['grill'], '|')),
+                '%LUNCH%'     => str_replace('|', ', ', trim($data['lunch'], '|')),
+                '%OTHER%'     => $data['other'],
+                '%TIME%'      => $data['time'],
+            ]
+        );
+
+        return wp_mail(
+            $to,
+            Settings::get('title') . ' - Anmeldung bestätigt',
+            $mail
+        );
     }
 
     /**
