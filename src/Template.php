@@ -81,4 +81,20 @@ class Template
         $template = file_get_contents($templateFile);
         return $template;
     }
+
+    /**
+     * Removes all whitespaces and line breaks
+     *
+     * @param string $html
+     * @return string
+     */
+    public static function removeWhitespace($html)
+    {
+        $html = preg_replace('/>(\s)+</i', '><', $html);
+        $html = preg_replace('/(\w)\s+</i', '$1<', $html);
+        $html = preg_replace('/>\s+(\w)/i', '>$1', $html);
+        $html = preg_replace('/"\s+(\w)/i', '"$1', $html);
+
+        return $html;
+    }
 }

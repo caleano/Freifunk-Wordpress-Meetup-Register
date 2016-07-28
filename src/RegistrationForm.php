@@ -29,11 +29,11 @@ class RegistrationForm
      */
     public function onGetForm(WP_Post $page, $errors = [])
     {
-        $page->post_title = self::$title . ' Anmeldung';
+        $page->post_title = self::$title . ' - Anmeldung';
         $errorList = '';
 
         if (!empty($errors)) {
-            $page->post_title .= ' - Fehler';
+            $page->post_title = self::$title . ' - Fehler';
             foreach ($errors as $name => $error) {
                 $errorList .= Template::renderErrors([
                     ucfirst($name) => $error
@@ -42,7 +42,7 @@ class RegistrationForm
         }
 
         $template = Template::render('register', ['%ERRORS%' => $errorList]);
-        $template = $this->removeWhitespace($template);
+        $template = Template::removeWhitespace($template);
         $page->post_content = $template;
 
         return $page;
@@ -62,13 +62,13 @@ class RegistrationForm
         $page->post_title = self::$title;
 
         $data = [
-            'name'      => $this->getPostData('name'),
-            'community' => $this->getPostData('community'),
-            'email'     => $this->getPostData('email'),
-            'day'       => $this->getPostData('day'),
-            'grill'     => $this->getPostData('grill', []),
-            'lunch'     => $this->getPostData('lunch', []),
-            'other'     => $this->getPostData('other', ''),
+            'name'      => Request::post('name'),
+            'community' => Request::post('community'),
+            'email'     => Request::post('email'),
+            'day'       => Request::post('day'),
+            'grill'     => Request::post('grill', []),
+            'lunch'     => Request::post('lunch', []),
+            'other'     => Request::post('other', ''),
         ];
 
         if ((new DataStore())->store($data)) {
@@ -110,7 +110,7 @@ class RegistrationForm
         }
 
         $page->post_title .= ' - OptIn';
-        $page->post_content = 'Du wurdest erfolgreich freigeschaltet!';
+        $page->post_content = Template::render('optInSuccess');
 
         return $page;
     }
@@ -120,8 +120,8 @@ class RegistrationForm
      */
     protected function validateOptIn()
     {
-        $email = $this->getGetData('email');
-        $optInKey = $this->getGetData('key');
+        $email = Request::get('email');
+        $optInKey = Request::get('key');
         /** @var wpdb $wpdb */
         global $wpdb;
         $table_name = $wpdb->prefix . 'meetup_registration';
@@ -192,20 +192,20 @@ class RegistrationForm
     {
         $errors = [];
 
-        if (($captcha = $this->getPostData('iAmAHiddenCap1chaDontPutAnyDataInHere')) && !empty($captcha)) {
+        if (($captcha = Request::post('iAmAHiddenCap1chaDontPutAnyDataInHere')) && !empty($captcha)) {
             $errors['iAmAHiddenCap1chaDontPutAnyDataInHere'] = 'You have been trapped...';
         }
 
-        if (!$this->getPostData('name')) {
+        if (!Request::post('name')) {
             $errors['name'] = 'Bitte gib deinen Namen an';
         }
 
-        if (!$this->getPostData('community')) {
+        if (!Request::post('community')) {
             $errors['community'] = 'Bitte gib deine Community an';
         }
 
         if (
-            !($email = $this->getPostData('email'))
+            !($email = Request::post('email'))
             || !filter_var($email, FILTER_VALIDATE_EMAIL)
         ) {
             $errors['email'] = 'Bitte gib eine gültige E-Mail an';
@@ -216,7 +216,7 @@ class RegistrationForm
         }
 
         if (
-            !($day = $this->getPostData('day'))
+            !($day = Request::post('day'))
             || !is_array($day)
             || !$this->validateArrayValues($day, ['friday', 'saturday', 'sunday'])
         ) {
@@ -224,7 +224,7 @@ class RegistrationForm
         }
 
         if (
-            ($grill = $this->getPostData('grill'))
+            ($grill = Request::post('grill'))
             && (
                 !is_array($grill)
                 || !$this->validateArrayValues($grill, ['saturday', 'sunday'])
@@ -234,7 +234,7 @@ class RegistrationForm
         }
 
         if (
-            ($lunch = $this->getPostData('lunch'))
+            ($lunch = Request::post('lunch'))
             && (
                 !is_array($lunch)
                 || !$this->validateArrayValues($lunch, ['saturday'])
@@ -259,49 +259,5 @@ class RegistrationForm
             }
         }
         return true;
-    }
-
-    /**
-     * @param string $key
-     * @param mixed  $default
-     * @return mixed
-     */
-    protected function getGetData($key, $default = null)
-    {
-        if (isset($_GET[$key])) {
-            return $_GET[$key];
-        }
-
-        return $default;
-    }
-
-    /**
-     * @param string $key
-     * @param mixed  $default
-     * @return mixed
-     */
-    protected function getPostData($key, $default = null)
-    {
-        if (isset($_POST[$key])) {
-            return $_POST[$key];
-        }
-
-        return $default;
-    }
-
-    /**
-     * Removes all whitespaces and line breaks
-     *
-     * @param string $html
-     * @return string
-     */
-    protected function removeWhitespace($html)
-    {
-        $html = preg_replace('/>(\s)+</i', '><', $html);
-        $html = preg_replace('/(\w)\s+</i', '$1<', $html);
-        $html = preg_replace('/>\s+(\w)/i', '>$1', $html);
-        $html = preg_replace('/"\s+(\w)/i', '"$1', $html);
-
-        return $html;
     }
 }

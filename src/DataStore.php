@@ -78,7 +78,7 @@ class DataStore
 
         return wp_mail(
             $data['email'],
-            'Freifunk Meetup 2016.2 - Anmeldung',
+            RegistrationForm::$title . ' - Anmeldung',
             Template::render('optInMail', ['%OPT_IN_URL%' => $confirmationLink])
         );
     }
