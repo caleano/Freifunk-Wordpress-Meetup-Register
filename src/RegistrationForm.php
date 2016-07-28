@@ -30,21 +30,18 @@ class RegistrationForm
     public function onGetForm(WP_Post $page, $errors = [])
     {
         $page->post_title = self::$title . ' Anmeldung';
-        $template = $this->getTemplatePart('register');
+        $errorList = '';
 
-        if (empty($errors)) {
-            $template = str_replace('%ERRORS%', '', $template);
-        } else {
-            $errorList = '';
+        if (!empty($errors)) {
+            $page->post_title .= ' - Fehler';
             foreach ($errors as $name => $error) {
-                $errorList .= $this->getErrorTemplate([
+                $errorList .= Template::renderErrors([
                     ucfirst($name) => $error
                 ]);
             }
-
-            $template = str_replace('%ERRORS%', $errorList, $template);
         }
 
+        $template = Template::render('register', ['%ERRORS%' => $errorList]);
         $template = $this->removeWhitespace($template);
         $page->post_content = $template;
 
@@ -76,10 +73,10 @@ class RegistrationForm
 
         if ((new DataStore())->store($data)) {
             $page->post_title .= ' - Angemeldet';
-            $template = $this->getTemplatePart('success');
+            $template = Template::render('success');
             $page->post_content = $template;
         } else {
-            $template = $this->getErrorTemplate([
+            $template = Template::renderErrors([
                 'Es gab einen Fehler' => 'Entweder die Mail konnte nicht versendet werden '
                     . 'oder irgend etwas ist beim Speichern schief gelaufen...'
             ]);
@@ -104,7 +101,7 @@ class RegistrationForm
             !($id = $this->validateOptIn())
             || !$this->unsetOptIn($id)
         ) {
-            $template = $this->getErrorTemplate([
+            $template = Template::renderErrors([
                 'Es gab einen Fehler' => 'Wahrscheinlich wurdest du bereits freigeschaltet'
             ]);
             $page->post_title .= ' - Fehler';
@@ -116,32 +113,6 @@ class RegistrationForm
         $page->post_content = 'Du wurdest erfolgreich freigeschaltet!';
 
         return $page;
-    }
-
-    /**
-     * Returns the error message html code
-     *
-     * @param string[] $errors
-     * @return string
-     */
-    protected function getErrorTemplate(array $errors)
-    {
-        $errorTemplate = $this->getTemplatePart('errorMessage');
-        $template = '';
-
-        foreach ($errors as $title => $error) {
-            $template .= str_replace(
-                ['%MESSAGE_TITLE%', '%MESSAGE%'],
-                [
-                    $title,
-                    $error,
-                ],
-                $errorTemplate
-
-            );
-        }
-
-        return $template;
     }
 
     /**
@@ -212,23 +183,6 @@ class RegistrationForm
         );
 
         return (bool)$data;
-    }
-
-    /**
-     * Load a template part
-     *
-     * @param string $name
-     * @return string
-     */
-    protected function getTemplatePart($name)
-    {
-        $templateFile = __DIR__ . '/../templates/' . $name . '.html';
-        if (!is_readable($templateFile)) {
-            return '';
-        }
-
-        $template = file_get_contents($templateFile);
-        return $template;
     }
 
     /**

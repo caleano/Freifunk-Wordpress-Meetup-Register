@@ -75,17 +75,11 @@ class DataStore
     protected function sendEmail(array $data, $optInKey)
     {
         $confirmationLink = $this->generateConfirmationLink($data, $optInKey);
-        $message = sprintf(
-            'Bitte klicke auf den folgenden Link um deine Anmeldung zu bestätigen' . PHP_EOL
-            . '%s' . PHP_EOL . PHP_EOL
-            . 'Das Orga-Team',
-            $confirmationLink
-        );
 
         return wp_mail(
             $data['email'],
             'Freifunk Meetup 2016.2 - Anmeldung',
-            $message
+            Template::render('optInMail', ['%OPT_IN_URL%' => $confirmationLink])
         );
     }
 
