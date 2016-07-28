@@ -2,7 +2,6 @@
 
 use Caleano\Freifunk\MeetupRegister\WordpressRouting as Route;
 use stdClass;
-use WP_Post;
 use wpdb;
 
 defined('ABSPATH') or die('NOPE');
@@ -14,24 +13,18 @@ class Export
 {
     public function __construct()
     {
-        require_once(ABSPATH . 'wp-includes/pluggable.php');
-
-        $user = wp_get_current_user();
-
-        if (!$user->has_cap('export')) {
-            return;
-        }
-
         Route::get('meetup/export', [$this, 'onGetExport']);
     }
 
     /**
      * Show the registration form
-     *
-     * @param WP_Post $page
      */
-    public function onGetExport(WP_Post $page)
+    public function onGetExport()
     {
+        if (!$this->hasPermissions()) {
+            return;
+        }
+
         /** @var stdClass[] $data */
         $data = $this->getData();
         if (empty($data)) {
@@ -92,6 +85,9 @@ class Export
         return array_keys($firstElement);
     }
 
+    /**
+     * @return stdClass[]
+     */
     protected function getData()
     {
         /** @var wpdb $wpdb */
@@ -105,5 +101,17 @@ class Export
                  ");
 
         return $data;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function hasPermissions()
+    {
+        require_once(ABSPATH . 'wp-includes/pluggable.php');
+
+        $user = wp_get_current_user();
+
+        return $user->has_cap('export');
     }
 }

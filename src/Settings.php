@@ -68,7 +68,6 @@ class Settings
             <h2>Meetup Registration</h2>
             <form method="post" action="options.php">
                 <?php
-                // This prints out all hidden setting fields
                 settings_fields('main_settings_group');
                 do_settings_sections('meetup-registration-admin');
                 submit_button();
@@ -91,7 +90,7 @@ class Settings
         );
 
         add_settings_section(
-            'setting_section_id',
+            'primary_settings',
             'Meetup Registration settings',
             [$this, 'printSectionInfo'],
             'meetup-registration-admin'
@@ -102,7 +101,7 @@ class Settings
             'Title',
             [$this, 'titleCallback'],
             'meetup-registration-admin',
-            'setting_section_id'
+            'primary_settings'
         );
     }
 
@@ -114,12 +113,12 @@ class Settings
      */
     public function sanitize(array $input)
     {
-        $new_input = [];
+        $sanitizedInput = [];
         if (isset($input['title'])) {
-            $new_input['title'] = sanitize_text_field($input['title']);
+            $sanitizedInput['title'] = sanitize_text_field($input['title']);
         }
 
-        return $new_input;
+        return $sanitizedInput;
     }
 
     /**
@@ -147,6 +146,6 @@ class Settings
     public function printExport()
     {
         $url = site_url('/meetup/export');
-        echo '<a href="' . $url . '" class="button button-primary">Export Data</a>';
+        echo '<a href="' . $url . '" class="button button-default">Export Data</a>';
     }
 }
