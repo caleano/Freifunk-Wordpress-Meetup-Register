@@ -10,6 +10,7 @@ class Template
     public function __construct()
     {
         add_action('wp_enqueue_scripts', [$this, 'registerStyles']);
+        add_action('wp_enqueue_scripts', [$this, 'registerScripts']);
     }
 
     /**
@@ -17,7 +18,15 @@ class Template
      */
     public function registerStyles()
     {
-        wp_enqueue_style('meetup-registration', plugins_url('Meetup-Register/css/plugin.css'));
+        wp_enqueue_style('meetup-registration', plugins_url('Meetup-Register/assets/css/plugin.css'));
+    }
+
+    /**
+     * Register and enqueue scripts.
+     */
+    public function registerScripts()
+    {
+        wp_enqueue_script('meetup-registration-js', plugins_url('Meetup-Register/assets/js/plugin.js'), ['jquery']);
     }
 
     /**
