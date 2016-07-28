@@ -10,6 +10,7 @@ Author URI: https://igorshp.de
 License: MIT
 */
 
+use Caleano\Freifunk\MeetupRegister\Export;
 use Caleano\Freifunk\MeetupRegister\RegistrationForm;
 use Caleano\Freifunk\MeetupRegister\Settings;
 use Caleano\Freifunk\MeetupRegister\Template;
@@ -23,9 +24,11 @@ require_once __DIR__ . '/src/DataStore.php';
 require_once __DIR__ . '/src/Template.php';
 require_once __DIR__ . '/src/Update.php';
 require_once __DIR__ . '/src/RegistrationForm.php';
+require_once __DIR__ . '/src/Export.php';
 
 $settings = new Settings();
 $update = new Update();
 $router = new WordpressRouting();
 $template = new Template();
 $form = new RegistrationForm();
+$export = new Export();

@@ -74,6 +74,7 @@ class Settings
                 submit_button();
                 ?>
             </form>
+            <?php $this->printExport(); ?>
         </div>
         <?php
     }
@@ -138,5 +139,14 @@ class Settings
             '<input type="text" id="title" name="meetup_registration[title]" value="%s" />',
             self::$options['title']
         );
+    }
+
+    /**
+     * Print the Section text
+     */
+    public function printExport()
+    {
+        $url = site_url('/meetup/export');
+        echo '<a href="' . $url . '" class="button button-primary">Export Data</a>';
     }
 }
