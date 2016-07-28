@@ -50,6 +50,7 @@ class DataStore
                 'lunch'     => $this->getArrayString($data['lunch']),
                 'other'     => $data['other'],
                 'optInKey'  => $optInKey,
+                'time'      => date('Y-m-d H:i:s'),
             ]
         );
     }

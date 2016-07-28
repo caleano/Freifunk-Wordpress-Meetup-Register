@@ -32,13 +32,13 @@ class Update
                 `id` bigint(20) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) NOT NULL,
                 `community` varchar(255) NOT NULL,
-                `email` varchar(255) UNIQUE NOT NULL,
+                `email` varchar(191) UNIQUE NOT NULL,
                 `day` varchar(255) NOT NULL,
                 `grill` varchar(255),
                 `lunch` varchar(255),
                 `other` text,
                 `optInKey` varchar(50),
-                `time` datetime DEFAULT NOW() NOT NULL,
+                `time` datetime,
                 UNIQUE KEY id (`id`)
             ) $charset_collate;";
 
