@@ -11,8 +11,6 @@ defined('ABSPATH') or die('NOPE');
  */
 class RegistrationForm
 {
-    public static $title = 'Freifunk Meetup 2016.2';
-
     public function __construct()
     {
         Route::get('meetup/register', [$this, 'onGetForm']);
@@ -29,11 +27,11 @@ class RegistrationForm
      */
     public function onGetForm(WP_Post $page, $errors = [])
     {
-        $page->post_title = self::$title . ' - Anmeldung';
+        $page->post_title = Settings::get('title') . ' - Anmeldung';
         $errorList = '';
 
         if (!empty($errors)) {
-            $page->post_title = self::$title . ' - Fehler';
+            $page->post_title = Settings::get('title') . ' - Fehler';
             foreach ($errors as $name => $error) {
                 $errorList .= Template::renderErrors([
                     ucfirst($name) => $error
@@ -59,7 +57,7 @@ class RegistrationForm
         if (($errors = $this->validateRequest()) !== true) {
             return $this->onGetForm($page, $errors);
         }
-        $page->post_title = self::$title;
+        $page->post_title = Settings::get('title');
 
         $data = [
             'name'      => Request::post('name'),
@@ -95,7 +93,7 @@ class RegistrationForm
      */
     public function onGetOptIn(WP_Post $page)
     {
-        $page->post_title = self::$title;
+        $page->post_title = Settings::get('title');
 
         if (
             !($id = $this->validateOptIn())
