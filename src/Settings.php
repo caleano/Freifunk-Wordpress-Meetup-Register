@@ -32,7 +32,7 @@ class Settings
     {
         self::$options = array_merge(
             [
-                'title'      => 'Freifunk Meetup 2016.2',
+                'title'      => 'Freifunk Hessen Meetup 2016.2',
                 'active'     => true,
                 'email'      => '',
                 'about-text' => 'Anmeldung zum dritten Treffen der Freifunk Communities in und um Hessen, *irgendwann* 2016',
