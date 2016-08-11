@@ -251,7 +251,7 @@ class RegistrationForm
             ($lunch = Request::post('lunch'))
             && (
                 !is_array($lunch)
-                || !$this->validateArrayValues($lunch, ['saturday', 'sunday']])
+                || !$this->validateArrayValues($lunch, ['saturday', 'sunday'])
             )
         ) {
             $errors['lunch'] = 'Invalid "lunch"-Value';
