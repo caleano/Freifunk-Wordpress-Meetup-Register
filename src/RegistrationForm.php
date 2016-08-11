@@ -84,7 +84,7 @@ class RegistrationForm
             $page->post_content = $template;
         } else {
             $template = Template::renderErrors([
-                'Es gab einen Fehler' => 'Entweder die Mail konnte nicht versendet werden '
+                'Es gab einen Fehler' => 'Entweder die Mail konnte nicht versendet werden, '
                     . 'oder irgend etwas ist beim Speichern schief gelaufen...'
             ]);
             $page->post_title .= ' - Fehler';
@@ -110,7 +110,7 @@ class RegistrationForm
             || !$this->unsetOptIn($data['id'])
         ) {
             $template = Template::renderErrors([
-                'Es gab einen Fehler' => 'Wahrscheinlich wurdest du bereits freigeschaltet'
+                'Es gab einen Fehler' => 'Wahrscheinlich hast Du dich bereits angemeldet.'
             ]);
             $page->post_title .= ' - Fehler';
             $page->post_content = $template;
@@ -248,6 +248,16 @@ class RegistrationForm
         }
 
         if (
+            ($lunch = Request::post('lunch'))
+            && (
+                !is_array($lunch)
+                || !$this->validateArrayValues($lunch, ['saturday', 'sunday']])
+            )
+        ) {
+            $errors['lunch'] = 'Invalid "lunch"-Value';
+        }
+
+        if (
             ($grill = Request::post('grill'))
             && (
                 !is_array($grill)
@@ -255,16 +265,6 @@ class RegistrationForm
             )
         ) {
             $errors['grill'] = 'Invalid "grill"-Value';
-        }
-
-        if (
-            ($lunch = Request::post('lunch'))
-            && (
-                !is_array($lunch)
-                || !$this->validateArrayValues($lunch, ['saturday'])
-            )
-        ) {
-            $errors['lunch'] = 'Invalid "lunch"-Value';
         }
 
         return empty($errors) ? true : $errors;
@@ -288,8 +288,8 @@ class RegistrationForm
                 '%COMMUNITY%' => $data['community'],
                 '%EMAIL%'     => $data['email'],
                 '%DAY%'       => str_replace('|', ', ', trim($data['day'], '|')),
-                '%GRILL%'     => str_replace('|', ', ', trim($data['grill'], '|')),
                 '%LUNCH%'     => str_replace('|', ', ', trim($data['lunch'], '|')),
+                '%GRILL%'     => str_replace('|', ', ', trim($data['grill'], '|')),
                 '%OTHER%'     => $data['other'],
                 '%TIME%'      => $data['time'],
             ]
