@@ -9,6 +9,7 @@ Author: Igor Scheller <igor.scheller@igorshp.de>
 Author URI: https://igorshp.de
 License: MIT
 */
+require_once __DIR__ . '/autoload.php';
 
 use Caleano\Freifunk\MeetupRegister\Export;
 use Caleano\Freifunk\MeetupRegister\RegistrationForm;
@@ -16,15 +17,6 @@ use Caleano\Freifunk\MeetupRegister\Settings;
 use Caleano\Freifunk\MeetupRegister\Template;
 use Caleano\Freifunk\MeetupRegister\Update;
 use Caleano\Freifunk\MeetupRegister\WordpressRouting;
-
-require_once __DIR__ . '/src/Settings.php';
-require_once __DIR__ . '/src/Request.php';
-require_once __DIR__ . '/src/WordpressRouting.php';
-require_once __DIR__ . '/src/DataStore.php';
-require_once __DIR__ . '/src/Template.php';
-require_once __DIR__ . '/src/Update.php';
-require_once __DIR__ . '/src/RegistrationForm.php';
-require_once __DIR__ . '/src/Export.php';
 
 $settings = new Settings();
 $update = new Update();
