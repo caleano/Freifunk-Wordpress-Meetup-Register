@@ -125,6 +125,7 @@ class Export
                   SELECT *
                   FROM $table_name
                   WHERE `optInKey` IS NULL
+                  ORDER BY id
                  ");
 
         return $data;
